@@ -34,6 +34,12 @@ def rssGetDetailAndDownload(rsslink):
 
         rssSum += 1
         print("%d: %s -- %s " % (rssSum, item.title, datetime.datetime.now().strftime("%H:%M:%S")))
+
+        if ARGS.regex:
+            if not re.search(ARGS.regex, item.title, re.I):
+                print(' Regex skip.')
+                continue
+
         imdbstr = ''
         if hasattr(item, 'link'):
             if ARGS.cookie:
@@ -142,6 +148,7 @@ def loadArgs():
     parser.add_argument('-R', '--rss', help='the rss link.')
     parser.add_argument('-i', '--info-url', help='the detail page contains imdb/douban id.')
     parser.add_argument('-c', '--cookie', help='the cookie to the detail page.')
+    parser.add_argument('--regex', help='regex to match the rss title.')
     global ARGS
     ARGS = parser.parse_args()
 

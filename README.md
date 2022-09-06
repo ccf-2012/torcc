@@ -12,7 +12,8 @@ pip install -r requirements.txt
 ## 使用
 ```
 python torcc.py -h
-usage: torcc.py [-h] [-H HOST] [-P PORT] [-u USERNAME] [-p PASSWORD] [-R RSS] [-i INFO_URL] -c COOKIE
+
+usage: torcc.py [-h] [-H HOST] [-P PORT] [-u USERNAME] [-p PASSWORD] [-R RSS] [-i INFO_URL] [-c COOKIE] [--regex REGEX]
 
 torcp: a script hardlink media files and directories in Emby-happy naming and structs.
 
@@ -29,6 +30,7 @@ options:
                         the detail page contains imdb/douban id.
   -c COOKIE, --cookie COOKIE
                         the cookie to the detail page.
+  --regex REGEX         regex to match the rss title.
 ```
 
 * 注： 不加 `--cookie` 不解析种子信息页，不加qBit的 `--host` 和 `--username` 就不会添加下载器
