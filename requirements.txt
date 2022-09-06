@@ -1,0 +1,5 @@
+qbittorrent-api
+requests
+urllib3
+tmdbv3api
+feedparser
