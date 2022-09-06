@@ -1,6 +1,5 @@
 # torcc
-> 对rss的 各项，逐一解析种子详情页面中的IMDb值，将种子加入下载器时添加IMDb标签
-> A script parse info page to get IMDb id and send the torrent to the qBittorrent
+用于rss下载种子，对其中各项逐一解析种子详情页面中的IMDb值，将种子加入下载器时添加IMDb标签。 
 
 ## 安装 
 ```sh
