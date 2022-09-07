@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-A script parse the info page of a torrent to get IMDb id, 
-and add torrent to the qbit client with this IMDb id as a tag.
+A script to rss and parse the info page of a torrent to get IMDb id, 
+add torrent to the qbit client with this IMDb id as a tag.
 """
 import re
 import argparse
@@ -145,8 +145,7 @@ def parseDetailPage(pageUrl, pageCookie):
 
 def loadArgs():
     parser = argparse.ArgumentParser(
-        description=
-        'torcp: a script hardlink media files and directories in Emby-happy naming and structs.'
+        description='A script to rss pt site, add torrent to qbit with IMDb id as a tag.'
     )
     parser.add_argument('-H', '--host', help='the qbittorrent host ip.')
     parser.add_argument('-P', '--port', help='the qbittorrent port.')
