@@ -16,7 +16,7 @@ python torcc.py -h
 usage: torcc.py [-h] [-H HOST] [-P PORT] [-u USERNAME] [-p PASSWORD] [-R RSS] [-s SINGLE] [-c COOKIE] [--title-regex TITLE_REGEX]
                 [--info-regex INFO_REGEX] [--info-not-regex INFO_NOT_REGEX] [--add-pause] [--exclude-no-imdb]
 
-torcp: a script hardlink media files and directories in Emby-happy naming and structs.
+A script to rss pt site, add torrent to qbit with IMDb id as a tag.
 
 options:
   -h, --help            show this help message and exit
