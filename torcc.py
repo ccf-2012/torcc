@@ -160,7 +160,7 @@ def loadArgs():
     parser.add_argument('--info-not-regex', help='regex to not match the info/detail page.')
     parser.add_argument('--add-pause',
                         action='store_true',
-                        help='Add in PAUSE state.')
+                        help='Add torrent in PAUSE state.')
     parser.add_argument('--exclude-no-imdb',
                         action='store_true',
                         help='Donot download without IMDb.')

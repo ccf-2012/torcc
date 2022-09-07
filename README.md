@@ -28,33 +28,6 @@ options:
                         the qbittorrent password.
   -R RSS, --rss RSS     the rss link.
   -s SINGLE, --single SINGLE
-                        the detail page contains imdb/douban id.
-  -c COOKIE, --cookie COOKIE
-                        the cookie to the detail page.
-  --title-regex TITLE_REGEX
-                        regex to match the rss title.
-  --info-regex INFO_REGEX
-                        regex to match the info page.
-  --info-not-regex INFO_NOT_REGEX
-                        regex to not match the info page.
-  --add-pause           Add in PAUSE state.
-  --exclude-no-imdb     Donot download without IMDb.
-(torcp) ~/fuse/torcc % python torcc.py -h                                                                                                  (main)torcc
-usage: torcc.py [-h] [-H HOST] [-P PORT] [-u USERNAME] [-p PASSWORD] [-R RSS] [-s SINGLE] [-c COOKIE] [--title-regex TITLE_REGEX]
-                [--info-regex INFO_REGEX] [--info-not-regex INFO_NOT_REGEX] [--add-pause] [--exclude-no-imdb]
-
-torcp: a script hardlink media files and directories in Emby-happy naming and structs.
-
-options:
-  -h, --help            show this help message and exit
-  -H HOST, --host HOST  the qbittorrent host ip.
-  -P PORT, --port PORT  the qbittorrent port.
-  -u USERNAME, --username USERNAME
-                        the qbittorrent usernmae.
-  -p PASSWORD, --password PASSWORD
-                        the qbittorrent password.
-  -R RSS, --rss RSS     the rss link.
-  -s SINGLE, --single SINGLE
                         the detail page of the torrent.
   -c COOKIE, --cookie COOKIE
                         the cookie to the detail page.
@@ -64,7 +37,7 @@ options:
                         regex to match the info/detail page.
   --info-not-regex INFO_NOT_REGEX
                         regex to not match the info/detail page.
-  --add-pause           Add in PAUSE state.
+  --add-pause           Add torrent in PAUSE state.
   --exclude-no-imdb     Donot download without IMDb.
 ```
 
