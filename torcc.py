@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-A script parse the info page of a torrent and add torrent to the qbit client.
-parse detail page to get imdb/douban id.
+A script parse the info page of a torrent to get IMDb id, 
+and add torrent to the qbit client with this IMDb id as a tag.
 """
 import re
 import argparse
@@ -24,6 +24,7 @@ DOWNLOAD_URL_RE = [
 def rssGetDetailAndDownload(rsslink):
     feed = feedparser.parse(rsslink)
     rssSum = 0
+    rssAccept = 0
     for item in feed.entries:
         if not hasattr(item, 'id'):
             print('No id')
@@ -35,24 +36,31 @@ def rssGetDetailAndDownload(rsslink):
         rssSum += 1
         print("%d: %s -- %s " % (rssSum, item.title, datetime.datetime.now().strftime("%H:%M:%S")))
 
-        if ARGS.regex:
-            if not re.search(ARGS.regex, item.title, re.I):
-                print(' Regex skip.')
+        if ARGS.title_regex:
+            if not re.search(ARGS.title_regex, item.title, re.I):
+                print(' Title regex not match.')
                 continue
 
         imdbstr = ''
         if hasattr(item, 'link'):
             if ARGS.cookie:
-                imdbstr, downlink = parseDetailPage(item.link, ARGS.cookie)
+                match, imdbstr, downlink = parseDetailPage(item.link, ARGS.cookie)
+                if not match:
+                    print(' Info page regex not match.')
+                    continue
+                if ARGS.exclude_no_imdb and (not imdbstr):
+                    print(' Exclue media without IMDb.')
+                    continue
 
         if hasattr(item, 'links') and len(item.links) > 1:
             rssDownloadLink = item.links[1]['href']
             rssSize = item.links[1]['length']
             # Download
+            rssAccept += 1
             print('   %s (%s), %s' % (imdbstr, HumanBytes.format(int(rssSize)), rssDownloadLink))
             if ARGS.host and ARGS.username:
                 r = addQbitWithTag(rssDownloadLink, imdbstr)
-    print('Total: %d ' % rssSum)
+    print('Total: %d, Accepted: %d ' % (rssSum, rssAccept))
 
 
 def addQbitWithTag(downlink, imdbtag):
@@ -70,7 +78,7 @@ def addQbitWithTag(downlink, imdbtag):
         # curr_added_on = time.time()
         result = qbClient.torrents_add(
             urls=downlink,
-            is_paused=False,
+            is_paused=ARGS.add_pause,
             # save_path=download_location,
             # download_path=download_location,
             # category=timestamp,
@@ -89,14 +97,10 @@ def addQbitWithTag(downlink, imdbtag):
 
     
 
-def findConfig(infoUrl):
-    hostnameList = urllib.parse.urlparse(infoUrl).netloc.split('.')
-    abbrev = hostnameList[-2] if len(hostnameList) >= 2 else ''
-    return next(filter(lambda ele: ele['host'] == abbrev, SITE_CONFIGS), None)
-    # for i in range(len(SITE_CONFIGS)):
-    #     if SITE_CONFIGS[i]['host'] == abbrev:
-    #         return SITE_CONFIGS[i]
-    # return None
+# def findConfig(infoUrl):
+#     hostnameList = urllib.parse.urlparse(infoUrl).netloc.split('.')
+#     abbrev = hostnameList[-2] if len(hostnameList) >= 2 else ''
+#     return next(filter(lambda ele: ele['host'] == abbrev, SITE_CONFIGS), None)
 
 
 def parseDetailPage(pageUrl, pageCookie):
@@ -111,29 +115,32 @@ def parseDetailPage(pageUrl, pageCookie):
 
     doc = requests.get(pageUrl, headers=headers, cookies=cookies).text
 
-    # thisConfig = findConfig(pageUrl)
-    # if not thisConfig:
-    #     return None, None
+    if ARGS.info_regex:
+        m0 = re.search(ARGS.info_regex, doc, flags=re.A)
+        if not m0:
+            # print('Info regex not match.')
+            return False, '', ''
+    if ARGS.info_not_regex:
+        m0 = re.search(ARGS.info_not_regex, doc, flags=re.A)
+        if m0:
+            # print('Info regex not match.')
+            return False, '', ''
+
     imdbstr = ''
     imdbRe = r'IMDb(链接)\s*(\<.[!>]*\>)?.*https://www\.imdb\.com/title/tt(\d+)'
     m1 = re.search(imdbRe, doc, flags=re.A)
     if m1:
         imdbstr = 'tt' + m1[3]
-    # print(doc)
 
     for reUrl in DOWNLOAD_URL_RE:
         if re.search(reUrl, doc, flags=re.A):
             break
-    # downlinkRe = thisConfig['downlinkRe']
     downlink = ''
     m2 = re.search(reUrl, doc, flags=re.A)
     if m2:
         downlink = m2[0]
 
-    return imdbstr, downlink
-    # html = etree.parse(doc, etree.HTMLParser())
-    # lilist = html.xpath('//*[@id="torrent_dl_url"]/a')
-    # print(lilist)
+    return True, imdbstr, downlink
 
 
 def loadArgs():
@@ -146,9 +153,17 @@ def loadArgs():
     parser.add_argument('-u', '--username', help='the qbittorrent usernmae.')
     parser.add_argument('-p', '--password', help='the qbittorrent password.')
     parser.add_argument('-R', '--rss', help='the rss link.')
-    parser.add_argument('-i', '--info-url', help='the detail page contains imdb/douban id.')
+    parser.add_argument('-s', '--single', help='the detail page of the torrent.')
     parser.add_argument('-c', '--cookie', help='the cookie to the detail page.')
-    parser.add_argument('--regex', help='regex to match the rss title.')
+    parser.add_argument('--title-regex', help='regex to match the rss title.')
+    parser.add_argument('--info-regex', help='regex to match the info/detail page.')
+    parser.add_argument('--info-not-regex', help='regex to not match the info/detail page.')
+    parser.add_argument('--add-pause',
+                        action='store_true',
+                        help='Add in PAUSE state.')
+    parser.add_argument('--exclude-no-imdb',
+                        action='store_true',
+                        help='Donot download without IMDb.')
     global ARGS
     ARGS = parser.parse_args()
 
@@ -158,14 +173,13 @@ def main():
     if ARGS.rss:
         rssGetDetailAndDownload(ARGS.rss)
 
-    elif ARGS.info_url:
+    elif ARGS.single:
         if ARGS.cookie:
             imdbstr, downlink = parseDetailPage(ARGS.info_url, ARGS.cookie)
-            if not (imdbstr and downlink):
-                print("Error")
+            if not downlink:
+                print("Error: download link not found")
                 return
             print(imdbstr, downlink)
-            # Download
             r = addQbitWithTag(downlink, imdbstr)
 
 
