@@ -1,5 +1,9 @@
 # torcc
-用于rss下载种子，对其中各项逐一解析种子详情页面中的IMDb值，将种子加入下载器时添加IMDb标签。 
+用于rss下载种子，对其中各项逐一解析种子详情页面中的IMDb值，并可通过正则表达式对标题和信息页的特征进行过滤，将种子加入下载器时添加IMDb标签。 
+
+## 应用说明
+[配合 PTPP 与torcc 实现 Emby/Plex 自动入库流程](https://github.com/ccf-2012/torcp/blob/main/AutoPlex.md)
+
 
 ## 安装 
 ```sh
