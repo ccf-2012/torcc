@@ -11,6 +11,7 @@ import urllib
 import qbittorrentapi
 import feedparser
 import datetime
+import time
 
 from humanbytes import HumanBytes
 # from lxml import etree
@@ -42,8 +43,11 @@ def rssGetDetailAndDownload(rsslink):
                 continue
 
         imdbstr = ''
-        if hasattr(item, 'link'):
-            if ARGS.cookie:
+        if ARGS.cookie:
+            # print('Sleeping for %d seconds' % ARGS.sleep)
+            time.sleep(ARGS.sleep)
+
+            if hasattr(item, 'link'):
                 match, imdbstr, downlink = parseDetailPage(item.link, ARGS.cookie)
                 if not match:
                     print(' Info page regex not match.')
@@ -60,6 +64,7 @@ def rssGetDetailAndDownload(rsslink):
             print('   %s (%s), %s' % (imdbstr, HumanBytes.format(int(rssSize)), rssDownloadLink))
             if ARGS.host and ARGS.username:
                 r = addQbitWithTag(rssDownloadLink, imdbstr)
+
     print('Total: %d, Accepted: %d ' % (rssSum, rssAccept))
 
 
@@ -157,6 +162,7 @@ def loadArgs():
     parser.add_argument('--title-regex', help='regex to match the rss title.')
     parser.add_argument('--info-regex', help='regex to match the info/detail page.')
     parser.add_argument('--info-not-regex', help='regex to not match the info/detail page.')
+    parser.add_argument('--sleep', type=int, help='sleep between each request of info page.')
     parser.add_argument('--add-pause',
                         action='store_true',
                         help='Add torrent in PAUSE state.')
@@ -165,6 +171,8 @@ def loadArgs():
                         help='Donot download without IMDb.')
     global ARGS
     ARGS = parser.parse_args()
+    if not ARGS.sleep:
+        ARGS.sleep = 5
 
 
 def main():
