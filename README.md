@@ -14,7 +14,7 @@ pip install -r requirements.txt
 python torcc.py -h
 
 usage: torcc.py [-h] [-H HOST] [-P PORT] [-u USERNAME] [-p PASSWORD] [-R RSS] [-s SINGLE] [-c COOKIE] [--title-regex TITLE_REGEX]
-                [--info-regex INFO_REGEX] [--info-not-regex INFO_NOT_REGEX] [--add-pause] [--exclude-no-imdb]
+                [--info-regex INFO_REGEX] [--info-not-regex INFO_NOT_REGEX] [--sleep SLEEP] [--add-pause] [--exclude-no-imdb]
 
 A script to rss pt site, add torrent to qbit with IMDb id as a tag.
 
@@ -37,8 +37,9 @@ options:
                         regex to match the info/detail page.
   --info-not-regex INFO_NOT_REGEX
                         regex to not match the info/detail page.
+  --sleep SLEEP         sleep between each request of info page.
   --add-pause           Add torrent in PAUSE state.
-  --exclude-no-imdb     Donot download without IMDb.
+  --exclude-no-imdb     Do not download without IMDb.
 ```
 
 * 注： 不加 `--cookie` 不解析种子信息页，不加qBit的 `--host` 和 `--username` 就不会添加下载器
